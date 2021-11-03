@@ -8,7 +8,6 @@
  * @license    license.txt
  * @version    1.0.1
  */
-
 namespace PACMEC;
 
 class Autoload
@@ -17,40 +16,7 @@ class Autoload
   {
     define('PACMEC_HOST', $_SERVER['SERVER_NAME']);
     if(!isset($GLOBALS['PACMEC'])) {
-      global $PACMEC;
-      $PACMEC['settings']['domain']         = $PACMEC['host']                       = $_SERVER['SERVER_NAME'];
-      $PACMEC['settings']['lang-detect']    = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
-      $PACMEC['settings']['server_address'] = $_SERVER['SERVER_ADDR'];
-      $PACMEC['settings']['remote_address'] = $PACMEC['ip']                         = (!empty($_SERVER['HTTP_CLIENT_IP'])) ? $_SERVER['HTTP_CLIENT_IP'] : ((!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']);
-      $PACMEC['hooks'] = null;
-      $PACMEC['DB'] = null;
-      $PACMEC['lang'] = null;
-      $PACMEC['path_orig'] = null;
-      $PACMEC['path'] = null;
-      $PACMEC['route'] = null;
-      $PACMEC['site'] = null;
-      $PACMEC['fullData'] = [];
-
-      $PACMEC['session'] = null;
-      $PACMEC['permanents_links'] = [];
-      $PACMEC['alerts'] = [];
-      $PACMEC['dictionary'] = [];
-      $PACMEC['glossary'] = null;
-      $PACMEC['website'] = [
-        "meta" => [],
-        "scripts" => ["head"=>[],"foot"=>[],"list"=>[]],
-        "styles" => ["head"=>[],"foot"=>[],"list"=>[]]
-      ];
-
-      $PACMEC['total_records'] = [];
-      $PACMEC['themes'] = [];
-      $PACMEC['gateways'] = [
-        'payments'=>[]
-      ];
-      $PACMEC['autoload'] = [
-        "classes"     => [],
-        "dictionary"     => [],
-      ];
+      throw new \Exception("PACMEC NO ESTA INICIADO", 1);
     }
   }
 
@@ -119,4 +85,3 @@ class Autoload
     }
   }
 }
-\spl_autoload_register(array(new \PACMEC\Autoload(), 'autoload'));

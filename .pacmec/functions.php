@@ -13,7 +13,6 @@ function getIpRemote()
   return $ip;
 }
 
-
 /**
 * Input data JSON
 *
@@ -106,4 +105,45 @@ function getBrowser() {
 		}
 	}
 	return $browser;
+}
+
+function validate_file($file_path)
+{
+  $info_r = [];
+  if((!\is_file($file_path) && !\file_exists($file_path)) || \is_dir($file_path) && \is_file($file_path)) return $info_r;
+  $texto = @\file_get_contents($file_path);
+  $input_line = \nl2br($texto);
+  \preg_match_all('/[*\s]+([a-zA-Z\s\i]+)[:]+[\s]+([a-zA-Z0-9]+[^<]+)/mi', $input_line, $detect_array);
+  if(isset($detect_array[1]) && isset($detect_array[2])){
+    foreach($detect_array[1] as $i=>$lab){
+      $_tag = \str_replace(['  ', ' ', '+'], '_', \strtolower($lab));
+      $_val = $detect_array[2][$i];
+      $info_r[$_tag] = $_val;
+      # echo "{$i}: ";
+      # echo "{$lab} - ";
+      # echo "{$_tag} ||| ";
+      # echo "{$_val}\n";
+    }
+  }
+  return $info_r;
+}
+
+function extract_info_lang($file_path)
+{
+  $info_r = [];
+  if((!\is_file($file_path) && !\file_exists($file_path)) || \is_dir($file_path) && \is_file($file_path)) return $info_r;
+  $texto = @\file_get_contents($file_path);
+  $input_line = \nl2br($texto);
+  \preg_match_all('/[*\s](.+)[=]+[\s]+([a-zA-Z0-9]+[^<]+)/mi', $input_line, $detect_array);
+  foreach($detect_array[1] as $i=>$lab){ $info_r[\str_replace([], [], ($lab))] = $detect_array[2][$i]; }
+  return $info_r;
+}
+
+function siteinfo($option_name)
+{
+  if(!isset($GLOBALS['PACMEC']['site']->settings[$option_name])){
+    return "NaN";
+    return "NaN - {$option_name} - NaN";
+  }
+  return @html_entity_decode($GLOBALS['PACMEC']['site']->settings[$option_name]);
 }
