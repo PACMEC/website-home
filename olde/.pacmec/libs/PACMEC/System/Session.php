@@ -47,12 +47,17 @@ class Session implements \SessionHandlerInterface {
     return true;
   }
 
+  public static function ipIsBanned($ip) : bool
+  {
+    return in_array($ip, Self::IPS_BANNED) || $_SERVER['SERVER_NAME'] !== $GLOBALS['PACMEC']['settings']['host'];
+  }
+
   public function read($id) {
   	try {
-      if(in_array($GLOBALS['PACMEC']['client_ip'], Self::IPS_BANNED)) return "";
+      if(Self::ipIsBanned(\getIpRemote())) return "";
   		$result = $this->link->FetchObject("SELECT `session_data` FROM `{$GLOBALS['PACMEC']['DB']->getTableName('sessions')}` WHERE `session_id`=? AND `session_expires`>=? AND `host`=?", [
         $id, date('Y-m-d H:i:s'),
-        $GLOBALS['PACMEC']['host']
+        $GLOBALS['PACMEC']['settings']['host']
       ]);
   		if($result !== false && isset($result->session_data)){ return $result->session_data; } else { return ""; }
   	}
@@ -64,15 +69,15 @@ class Session implements \SessionHandlerInterface {
 
   public function write($id, $data) {
   	try {
-      if(in_array($GLOBALS['PACMEC']['client_ip'], Self::IPS_BANNED)) return false;
+      if(Self::ipIsBanned(\getIpRemote())) return false;
   		$DateTime = date('Y-m-d H:i:s');
   		$NewDateTime = date('Y-m-d H:i:s',strtotime($DateTime.' + 1 hour'));
   		$result = $this->link->FetchObject("REPLACE INTO `{$GLOBALS['PACMEC']['DB']->getTableName('sessions')}` SET `session_id`=?, `session_expires`=?, `session_data`=?, `ip`=?, `host`=?", [
         $id,
         $NewDateTime,
         $data,
-        $GLOBALS['PACMEC']['client_ip'],
-        $GLOBALS['PACMEC']['host']
+        \getIpRemote(),
+        $GLOBALS['PACMEC']['settings']['host']
       ]);
   		if($result !== false){ return true; } else { return false; }
   	}

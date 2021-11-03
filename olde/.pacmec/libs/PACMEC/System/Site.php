@@ -19,7 +19,7 @@ class Site extends \PACMEC\System\BaseRecords
 	public $host                  = null;
 	public $name                  = null;
 	public $description           = null;
-  public $url               = null;
+  public $url                   = null;
 	public $homeurl               = null;
 	public $ip_server             = null;
 	public $is_active             = false;
@@ -32,9 +32,9 @@ class Site extends \PACMEC\System\BaseRecords
   public $keywords              = [];
   public $owner                 = null;
 	public $plugins               = [];
-	public $socials_links          = [];
-	# public $routes                = [];
-	#public $dictionary              = [];
+	public $socials_links         = [];
+	# public $routes              = [];
+	#public $dictionary           = [];
 	public $team                  = [];
   public $settings              = [];
 
@@ -69,7 +69,6 @@ class Site extends \PACMEC\System\BaseRecords
       $this->owner = new \PACMEC\System\User(["id" => $obj->owner]);
       $this->plugins = array_filter(explode(',', $this->get_option('plugins_activated')));
       $this->socials_links = json_decode($this->get_option('socials_links'));
-      $this->ssl = ($this->get_option('ssl'));
       $this->lang = ($this->get_option('lang'));
       $this->theme = ($this->get_option('theme'));
 
@@ -101,7 +100,6 @@ class Site extends \PACMEC\System\BaseRecords
           $this->settings[$option->option_name] = \PACMEC\System\Init::pacmec_parse_value($option->option_value);
         }
       }
-
     } catch (\Exception $e) {
       echo $e->getMessage();
       return [];

@@ -1,112 +1,91 @@
 <?php
-global $PACMEC;
-// Def. Folders
-if (!defined('HOME_PATH')) define('HOME_PATH', $_SERVER['DOCUMENT_ROOT']);
-if (!defined('PACMEC_PATH')) define('PACMEC_PATH', HOME_PATH . "/.pacmec");
-
+/**
+ * @package    PACMEC
+ * @category   AutoLoad
+ * @copyright  2021 FelipheGomez
+ * @author     FelipheGomez <info@pacmec.co>
+ * @license    license.txt
+ * @version    1.0.0
+ */
 try {
-  $file_settings = (is_file(PACMEC_PATH . "/.prv/{$_SERVER["HTTP_HOST"]}.php") && file_exists(PACMEC_PATH . "/.prv/{$_SERVER["HTTP_HOST"]}.php"))
-    ? PACMEC_PATH . "/.prv/{$_SERVER["HTTP_HOST"]}.php"
-    : PACMEC_PATH . '/.settings/default.php';   // detect file settings
-  require_once $file_settings;                  // configuraciones principales del sitio
-
-  if(strtolower(PACMEC_MODE) == 'dev'){
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
-  }
-
-  require_once(PACMEC_PATH . "/functions.php"); // Functions Globals
-  $PACMEC["autoload"]['classes']           = [];
-  $PACMEC["autoload"]['dictionaries']           = [];
-
-  $PACMEC['method']                     = $_SERVER["REQUEST_METHOD"];
-  $PACMEC['path_orig']                  = $_SERVER["REQUEST_URI"];
-  $PACMEC['path']                       = str_replace("/".\basename(__FILE__), "", $_SERVER["REQUEST_URI"]);
-  $query                      = [];
-  foreach (explode('&', $_SERVER["QUERY_STRING"]) as $chunk) {
-      $param = explode("=", $chunk);
-      if ($param && isset($param[0]) && isset($param[1])) {
-        $query[urldecode($param[0])] = urldecode($param[1]);
-      }
-  }
-  $PACMEC['input']                      = array_merge(\input_post_data_json(), $query);
-
-  $PACMEC['settings']['scheme']         = $_SERVER['REQUEST_SCHEME'];
-  $PACMEC['settings']['port']           = $_SERVER['SERVER_PORT'];
-  $PACMEC['settings']['host']           = $_SERVER['SERVER_NAME'];
-  $PACMEC['settings']['lang']           = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2) : null;
-  $PACMEC['settings']['server_address'] = $_SERVER['SERVER_ADDR'];
-  $PACMEC['settings']['remote_address'] = \getIpRemote();
-  $PACMEC['settings']['OS']             = \getOperatingSystem();
-  $PACMEC['settings']['agent']          = \getBrowser();
-  $PACMEC['settings']['session_id']     = NULL;
-  $PACMEC['settings']['admin']          = $_SERVER['SERVER_ADMIN'];
-
-  $PACMEC['origin'] = "{$PACMEC['settings']['scheme']}://{$PACMEC['settings']['host']}:{$PACMEC['settings']['port']}{$PACMEC['path']}";
-
-  require_once(PACMEC_PATH . "/libs/PACMEC/AutoClasses.php");  // AutoLoad Classes
+  ini_set('display_errors', 1);
+  ini_set('display_startup_errors', 1);
+  error_reporting(E_ALL);
+  if (!defined('ROOT_PATH')) define('ROOT_PATH', __DIR__);
+  if (!defined('PACMEC_PATH')) define('PACMEC_PATH', ROOT_PATH . "/.pacmec");
+  require_once (is_file(PACMEC_PATH . "/.settings/{$_SERVER['SERVER_NAME']}.php") && file_exists(PACMEC_PATH . "/.settings/{$_SERVER['SERVER_NAME']}.php")) ? PACMEC_PATH . "/.settings/{$_SERVER['SERVER_NAME']}.php" : PACMEC_PATH . "/.settings/default.php";
+  require_once PACMEC_PATH . '/core/functions.php';
+  \init_pacmec_vars();
+  require_once PACMEC_PATH . '/core/autoclasses.php';
   \spl_autoload_register(array(new \PACMEC\AutoClasses(), 'exec'));
-
-  $PACMEC['hooks'] = \PACMEC\System\Hooks::getInstance();
-  $PACMEC['DB'] = \PACMEC\System\DB::conexion();
-  $PACMEC['settings']['lang'] = \PACMEC\System\Init::get_detect_lang();
-  $PACMEC['site'] = new \PACMEC\System\Site(['host' => $PACMEC['settings']['host']]);
-
-  \PACMEC\System\Init::get_langs_http();
-
-  $PACMEC['autoload']                   = [
-    "classes"     => [],
-    "dictionary"     => [],
-  ];
-
   \session_set_save_handler(new \PACMEC\System\Session(), true);
 
-  if (!\is_session_started()) {
-    session_name(SS_NAME);
-    session_start();
+  // \PACMEC\System\Init::create();
+  try {
+    require_once PACMEC_PATH . "/libs/solvemedia/solvemedialib.php";
+
+    $GLOBALS['PACMEC']['host']         = $_SERVER['SERVER_NAME'];
+    $GLOBALS['PACMEC']['server_ip'] = $_SERVER['SERVER_ADDR'];
+    $GLOBALS['PACMEC']['path'] = \strtok($GLOBALS['PACMEC']['path_orig'], '?');
+    $GLOBALS['PACMEC']['DB'] = \PACMEC\System\DB::conexion();
+    \PACMEC\System\Init::run_session();
+    $GLOBALS['PACMEC']['session'] = new \PACMEC\Session\Init();
+    $GLOBALS['PACMEC']['site'] = \PACMEC\Sites\Site::autodetect();
+    if(empty($GLOBALS['PACMEC']['lang-detect'])) $GLOBALS['PACMEC']['lang-detect'] = \siteinfo("lang");
+
+    setlocale(LC_ALL, \siteinfo('locale')); // Establecer el localismo
+    setlocale(LC_MONETARY, \siteinfo('format_currency')); // Establecer el localismo
+    \PACMEC\System\Init::get_langs_http();
+    $GLOBALS['PACMEC']['permanents_links'] = [
+      "%pacmec_adminpanel%"  => urlencode(\__at("pacmec_adminpanel")),
+
+      "%pacmec_signin%"  => urlencode(\__at("pacmec_signin")),
+      "%pacmec_signup%"  => urlencode(\__at("pacmec_signup")),
+      "%pacmec_signout%"  => urlencode(\__at("pacmec_signout")),
+      "%pacmec_forgotten_password%"  => urlencode(\__at("pacmec_forgotten_password")),
+      "%pacmec_me_account%"  => urlencode(\__at("pacmec_me_account")),
+        "%pacmec_me_orders%"  => urlencode(\__at("pacmec_me_orders")),
+        "%pacmec_me_memberships%"  => urlencode(\__at("pacmec_me_memberships")),
+        "%pacmec_me_wishlist%"  => urlencode(\__at("pacmec_me_wishlist")),
+        "%pacmec_me_payments%"  => urlencode(\__at("pacmec_me_payments")),
+      "%pacmec_aboutus%"  => urlencode(\__at("pacmec_aboutus")),
+      "%pacmec_briefcase%"  => urlencode(\__at("pacmec_briefcase")),
+      "%pacmec_store%"  => urlencode(\__at("pacmec_store")),
+        "%pacmec_store_single%"  => urlencode(\__at("pacmec_store_single")),
+      "%pacmec_memberships%"  => urlencode(\__at("pacmec_memberships")),
+      "%pacmec_memberships_single%"  => urlencode(\__at("pacmec_memberships_single")),
+      "%pacmec_help%"  => urlencode(\__at("pacmec_help")),
+      "%pacmec_contactus%"  => urlencode(\__at("pacmec_contactus")),
+      #"%pacmec_how2buy%"  => urlencode(\__at("pacmec_how2buy")),
+      "%pacmec_search%"  => urlencode(\__at("pacmec_search")),
+    ];
+
+    $GLOBALS['PACMEC']['hooks'] = \PACMEC\System\Hooks::getInstance();
+    require_once PACMEC_PATH . "/core/shortcodes.php";
+    if(!$GLOBALS['PACMEC']['site']->isValid()) throw new \Exception(\__at("domain_no_create"), 1);
+    if(!$GLOBALS['PACMEC']['site']->isActive()) throw new \Exception(\__at("domain_no_auth"), 1);
+    $GLOBALS['PACMEC']['layout'] = $GLOBALS['PACMEC']['site']->theme;
+
+    \PACMEC\System\Init::checkedTables();
+    \PACMEC\System\Init::checkedOptions();
+    \PACMEC\System\Init::addAssetsPACMEC();
+    \PACMEC\System\Init::initTemplates();
+    \PACMEC\System\Init::initGateways();
+    \PACMEC\System\Init::initPlugins();
+    \PACMEC\System\Init::initRoute();
+    \add_action('meta_head', 'pacmec_meta_head');
+    \PACMEC\System\Init::initMetas();
+
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($GLOBALS['PACMEC'], JSON_PRETTY_PRINT);
+    // \PACMEC\System\Init::create();
+    //$pacmec = new \PACMEC\System\Init();
+  } catch (\Exception $e) {
+    echo str_replace("%s", $GLOBALS['PACMEC']['host'], $e->getMessage());
+    exit;
   }
-
-  $PACMEC['settings']['session_id']     = \session_id();
-  $PACMEC['settings']['session_name']     = \session_name();
-
-  if(empty($GLOBALS['PACMEC']['settings']['lang'])) $GLOBALS['PACMEC']['settings']['lang'] = \siteinfo("lang");
-
-  setlocale(LC_ALL, \siteinfo('locale')); // Establecer el localismo
-  setlocale(LC_MONETARY, \siteinfo('format_currency')); // Establecer el localismo
-
-  header('Content-Type: application/json; charset=utf-8');
-  echo json_encode($PACMEC, JSON_PRETTY_PRINT);
+  exit;
 } catch (\Exception $e) {
-  Echo "ERROR: \n".$e->getMessage();
+ echo \get_error_html($e->getMessage(), 'PACMEC-ERROR');
+ exit;
 }
-
-/*
-namespace PACMEC {
-  // interfaces
-  interface IPACMEC {
-    public function __construct();
-  }
-
-  interface ILayout {}
-  interface IRoute {}
-  interface ITemplate {}
-  interface IComponent {}
-
-  // classes
-  class PACMEC implements IPACMEC {
-    public $active = false;
-    public $addr   = "0.0.0.0";
-    public $vhost  = "domain.tld";
-
-    public function __construct(){
-      $this->addr = $_SERVER["SERVER_ADDR"];
-      $this->ip = $_SERVER["HTTP_HOST"];
-    }
-  }
-  class Layout implements ILayout {}
-  class Route implements IRoute {}
-  class Template implements ITemplate {}
-  class Component implements IComponent {}
-}
-*/

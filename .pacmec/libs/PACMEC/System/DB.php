@@ -1,16 +1,14 @@
 <?php
 /**
- *
  * @package    PACMEC
+ * @subpackage System
  * @category   DB
- * @copyright  2020-2021 FelipheGomez
+ * @copyright  2021 FelipheGomez
  * @author     FelipheGomez <feliphegomez@pm.me>
  * @license    license.txt
- * @version    1.0.1
+ * @version    1.0.0
  */
-
 namespace PACMEC\System;
-
 Class DB {
   private $driver
     , $adapter
@@ -71,7 +69,7 @@ Class DB {
   {
     $sql = "SELECT * from `INFORMATION_SCHEMA`.`TABLES` where (`information_schema`.`TABLES`.`TABLE_SCHEMA` = database())";
     $database_info = Self::FetchAllObject($sql, []);
-    if($database_info==false||!\is_array($database_info)||\count($database_info)<=0) throw new \Exception('No se a creado la base de datos o sus tablas.', 1);
+    if($database_info==false||!\is_array($database_info)||\count($database_info)<=0) throw new \Exception("PACMEC no install in DB.", 1);
     foreach ($database_info as $a) {
       $is_pacmec_tbl = @explode(DB_prefix, $a->TABLE_NAME);
       if(isset($is_pacmec_tbl[1])){
@@ -199,7 +197,7 @@ Class DB {
 			}
     }
     catch(\Exception $e){
-       // echo $e->getMessage();
+       echo $e->getMessage();
        exit();
     }
 	}
@@ -244,9 +242,10 @@ Class DB {
   {
     try {
       if(isset($this->tables[$tbl_gbl])) return $this->tables[$tbl_gbl]->name;
-      throw new \Exception("La tabla {$tbl_gbl} no fue encontrada por \PACMEC\System\DB::getTableName.", 1);
+      throw new \Exception("La tabla `{$tbl_gbl}` no fue encontrada. " . @\get_parent_class(), 1);
     } catch (\Exception $e) {
       echo $e->getMessage()."\n<br>";
+      exit;
     }
     return false;
   }

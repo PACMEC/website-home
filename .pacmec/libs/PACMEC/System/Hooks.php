@@ -13,9 +13,9 @@
  * of the code comes from there.
  * </p>
  *
- * @copyright   2011 - 2020
+ * @copyright   2011 - 2021
  *
- * @author      FelipheGomez <FelipheGomez@gmail.com>
+ * @author      FelipheGomez <FelipheGomez@pm.me>
  * @link        http://github.com/FelipheGomez
  * @author      Ohad Raz <admin@bainternet.info>
  * @link        http://en.bainternet.info
@@ -36,9 +36,8 @@
  *
  * @author     FelipheGomez <feliphegomez@gmail.com>
  * @package    PACMEC
- * @category   Helper
- * @version    Release: @package_version@
- * @version    1.0.1
+ * @category   Hooks
+ * @version    1.0.0
  */
 
 declare(strict_types=1);

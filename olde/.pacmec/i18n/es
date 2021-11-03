@@ -1,0 +1,60 @@
+/**
+ * Translation for the language: es
+ * Text Domain: español
+ *
+ * Version: 0.1
+ * Author: FelipheGomez
+ * Author URI: https://github.com/FelipheGomez
+ * (email : feliphegomez@gmail.com)
+ */
+domain_no_create=                                                               El dominio %s no a sido creado o configurado correctamente, consulte la documentacion.
+domain_no_auth=                                                                 Falta autenticar el dominio %s, consulte la documentacion.
+signin_r_no_exist=                                                              La cueta no existe.
+signin_r_inactive=                                                              La cuenta no esta activa.
+signin_r_error=                                                                 Error comprobando los datos.
+signin_r_success=                                                               Sesion iniciada con exito.
+signin_r_invalid_credentials=                                                   Los datos de accesos no son validos.
+undefined=                                                                      Desconocido.
+signin_r_invalid_info=                                                          Informacion incorrecta, valide los datos.
+form_r_invalid_info=                                                            Datos incorrectos
+
+/**
+ * Paginas
+ */
+home=                                                                           Página principal
+store=                                                                          Tienda
+memberships=                                                                    Membresias
+contactus=                                                                      Contactanos
+signin=                                                                         Ingresar
+signup=                                                                         Registrarme
+signout=                                                                        Salir
+aboutus=                                                                        Acerca de
+FAQs=                                                                           Ayuda
+terms_of_use=                                                                   Terminos y condiciones de uso
+politics=                                                                       Policitas
+lastest_products=                                                               Ultimos productos
+shoppings_cart=                                                                 Carrito
+categories=                                                                     Categorias
+
+/**
+ * permanents_links
+ */
+pacmec_adminpanel=                                                              admin-panel
+pacmec_signin=                                                                  iniciar-sesion
+pacmec_signup=                                                                  crear-cuenta
+pacmec_signout=                                                                 cerrar-sesion
+pacmec_forgotten_password=                                                      recuperar-cuenta
+pacmec_me_account=                                                              mi-cuenta
+pacmec_me_memberships=                                                          mis-afiliaciones
+pacmec_me_orders=                                                               mis-ordenes
+pacmec_me_wishlist=                                                             mis-favoritos
+pacmec_me_payments=                                                             mis-pagos
+pacmec_aboutus=                                                                 acerca-de
+pacmec_briefcase=                                                               portafolio
+pacmec_store=                                                                   tienda
+pacmec_store_single=                                                            ver-articulo
+pacmec_memberships=                                                              membresias
+pacmec_memberships_single=                                                       ver-membresia
+pacmec_help=                                                                    ayuda
+pacmec_contactus=                                                               contactanos
+pacmec_search=                                                                  buscar

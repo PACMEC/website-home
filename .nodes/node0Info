@@ -1,0 +1,33 @@
+{
+  enode: "enode://491ae9971108622dd1dad02e8134ac7128f781a0828c27903ebb13cad6d85b4983fd159ef75aabf24a08a59124a4f0cc8040dc1622f8cddb83abb3f9ff4b02cf@181.129.103.141:30303",
+  enr: "enr:-KO4QCI6ERp-pMFgJHE87Mdxjvlpksb-Ma-Lk4lwcjmb4LLHSkMUvRwtw0eJDMBkIz6npZYVO3ftiC5eXbpz0_K4bCSGAXzoBN_Jg2V0aMfGhOqspiaAgmlkgnY0gmlwhLWBZ42Jc2VjcDI1NmsxoQNJGumXEQhiLdHa0C6BNKxxKPeBoIKMJ5A-uxPK1thbSYRzbmFwwIN0Y3CCdl-DdWRwgnZf",
+  id: "e87f3d09c4732a5e6783361c7a6170425bb96997ae931721f02da5d2db3cb7ce",
+  ip: "181.129.103.141",
+  listenAddr: "[::]:30303",
+  name: "Geth/PACMEC/v1.10.11-stable-7231b3ef/linux-amd64/go1.17.2",
+  ports: {
+    discovery: 30303,
+    listener: 30303
+  },
+  protocols: {
+    eth: {
+      config: {
+        byzantiumBlock: 0,
+        chainId: 36957,
+        constantinopleBlock: 0,
+        eip150Block: 0,
+        eip150Hash: "0x0000000000000000000000000000000000000000000000000000000000000000",
+        eip155Block: 0,
+        eip158Block: 0,
+        ethash: {},
+        homesteadBlock: 0,
+        petersburgBlock: 0
+      },
+      difficulty: 1,
+      genesis: "0x08d7fdfd0d306074a86fe730a2a7c0915f2f27061cb1e3fe6feecd2c5c9e4865",
+      head: "0x08d7fdfd0d306074a86fe730a2a7c0915f2f27061cb1e3fe6feecd2c5c9e4865",
+      network: 36957
+    },
+    snap: {}
+  }
+}
